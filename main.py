@@ -17,5 +17,8 @@ for event in vk_longpoll.listen():
     if event.type == VkEventType.MESSAGE_NEW and event.to_me and event.text and event.from_user:
             if event.text.lower() in words.hello:
                 vk.messages.send(user_id=event.user_id, message="Привет вездекодерам!",
-                                 random_id=get_random_id(),
-                                 keyboard=keyboard.get_keyboard())
+                                 random_id=get_random_id())
+            if event.text.lower() == "kb":
+                vk.messages.send(user_id=event.user_id, message="Вопрос 1",
+                                 random_id=get_random_id(), keyboard=keyboard.get_keyboard())
+
