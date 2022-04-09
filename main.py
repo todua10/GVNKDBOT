@@ -7,11 +7,6 @@ vk_session = vk_api.VkApi(token=cfg.access_token)
 vk_longpoll = VkLongPoll(vk_session)
 vk = vk_session.get_api()
 
-keyboard = VkKeyboard(one_time=True)
-
-keyboard.add_button('1', color=VkKeyboardColor.SECONDARY)
-keyboard.add_button('2', color=VkKeyboardColor.PRIMARY)
-
 
 for event in vk_longpoll.listen():
     if event.type == VkEventType.MESSAGE_NEW and event.to_me and event.text and event.from_user:
@@ -21,4 +16,3 @@ for event in vk_longpoll.listen():
             if event.text.lower() == "kb":
                 vk.messages.send(user_id=event.user_id, message="Вопрос 1",
                                  random_id=get_random_id(), keyboard=keyboard.get_keyboard())
-
