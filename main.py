@@ -16,7 +16,7 @@ upload = VkUpload(vk_session)
 
 
 # Универсальный метод
-def send_message(id, text, answers=None, one_time=True, inline=False, keyboard=None, attachment = None):
+def send_message(id, text=None, answers=None, one_time=True, inline=False, keyboard=None, attachment=None):
     if not answers and not keyboard and not attachment:
         send_text(id, text)
     elif answers and not keyboard and not attachment:
@@ -28,8 +28,8 @@ def send_message(id, text, answers=None, one_time=True, inline=False, keyboard=N
         vk.messages.send(user_id=id, message=text, random_id=get_random_id(), keyboard=keyboard.get_keyboard(), attachment=attachment)
     elif keyboard and attachment:
         vk.messages.send(user_id=id, message=text, random_id=get_random_id(), keyboard=keyboard.get_keyboard(), attachment=attachment)
-    elif attachments:
-        send_attachment(user_id=id, message=text, random=attachment)
+    elif attachment and text:
+        send_attachment(user_id=id, message=text, attachment=attachment)
 
 
 # Упрощенные, более безопасные методы
@@ -49,9 +49,14 @@ def send_easy_keyboard(id, text, answers, one_time=True, inline=False):
 # Отправление сообщения с клавиатурой
 def send_keyboard(id, text, keyboard):
     if validate_keyboard(keyboard):
-        vk.messages.send(user_id=id, message=text,
-                         random_id=get_random_id(),
-                         keyboard=keyboard.get_keyboard())
+        if text:
+            vk.messages.send(user_id=id, message=text,
+                            random_id=get_random_id(),
+                            keyboard=keyboard.get_keyboard())
+        else:
+            vk.messages.send(user_id=id,
+                             random_id=get_random_id(),
+                             keyboard=keyboard.get_keyboard())
 
 
 def send_attachment(id, text, attachment):
