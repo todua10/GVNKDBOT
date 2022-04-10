@@ -14,13 +14,13 @@ upload_image = upload.photo_messages(photos=image)[0]
 
 # Класс ответа от бота. Нужен для того, чтобы бот мог задавать вопросы с выбором ответа и отправлять клавиатуру
 class Answer:
-    def __init__(self, text="Ошибка", answers=None, one_time=True, inline=False, keyboard=None, attachments=None):
+    def __init__(self, text="Ошибка", answers=None, one_time=True, inline=False, keyboard=None, attachment=None):
         self.text = text
         self.answers = answers
         self.one_time = one_time
         self.inline = inline
         self.keyboard = keyboard
-        self.attachments = attachments
+        self.attachment = attachment
 
 
 class Bot:
@@ -234,7 +234,7 @@ class Bot:
         image = "C:/Users/dontn/Desktop/_9hHVG3Loc8.jpg"
         upload_image = upload.photo_messages(photos=image)[0]
         attachments.append('photo{}_{}'.format(upload_image['owner_id'], upload_image['id']))
-        return Answer("text", keyboard=keyboard, attachments=','.join(attachments))
+        return Answer("text", keyboard=keyboard, attachment=','.join(attachments))
 
 
     def show_stat(self, text):

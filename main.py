@@ -16,20 +16,20 @@ upload = VkUpload(vk_session)
 
 
 # Универсальный метод
-def send_message(id, text, answers=None, one_time=True, inline=False, keyboard=None, attachments = None):
-    if not answers and not keyboard and not attachments:
+def send_message(id, text, answers=None, one_time=True, inline=False, keyboard=None, attachment = None):
+    if not answers and not keyboard and not attachment:
         send_text(id, text)
-    elif answers and not keyboard and not attachments:
+    elif answers and not keyboard and not attachment:
         send_easy_keyboard(id, text, answers, one_time, inline)
-    elif keyboard and not attachments:
+    elif keyboard and not attachment:
         send_keyboard(id, text, keyboard)
-    elif answers and attachments:
+    elif answers and attachment:
         keyboard = easy_keyboard(answers, one_time, inline)
-        vk.messages.send(user_id=id, message=text, random_id=get_random_id(), keyboard=keyboard.get_keyboard(), attachments=attachments)
-    elif keyboard and attachments:
-        vk.messages.send(user_id=id, message=text, random_id=get_random_id(), keyboard=keyboard.get_keyboard(), attachments=attachments)
+        vk.messages.send(user_id=id, message=text, random_id=get_random_id(), keyboard=keyboard.get_keyboard(), attachment=attachment)
+    elif keyboard and attachment:
+        vk.messages.send(user_id=id, message=text, random_id=get_random_id(), keyboard=keyboard.get_keyboard(), attachment=attachment)
     elif attachments:
-        send_attachments(user_id=id, message=text, random=attachments)
+        send_attachment(user_id=id, message=text, random=attachment)
 
 
 # Упрощенные, более безопасные методы
@@ -54,7 +54,7 @@ def send_keyboard(id, text, keyboard):
                          keyboard=keyboard.get_keyboard())
 
 
-def send_attachments(id, text, attachments):
+def send_attachment(id, text, attachment):
     vk.messages.send(user_id=id, message=text, random_id=get_random_id(), attachment=','.join(attachments))
 
 
@@ -105,4 +105,4 @@ for event in vk_longpoll.listen():
 
         bot_ans = bots[event.user_id].update(event.text)
         print(bot_ans.text)
-        send_message(event.user_id, bot_ans.text, bot_ans.answers, bot_ans.one_time, bot_ans.inline, bot_ans.keyboard, bot_ans.attachments)
+        send_message(event.user_id, bot_ans.text, bot_ans.answers, bot_ans.one_time, bot_ans.inline, bot_ans.keyboard, bot_ans.attachment)
