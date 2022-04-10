@@ -12,10 +12,6 @@ vk_session = vk_api.VkApi(token=cfg.access_token2)
 vk_longpoll = VkLongPoll(vk_session)
 vk = vk_session.get_api()
 upload = VkUpload(vk_session)
-attachments = []
-image = upload.photo_messages(photos="C:/Users/dontn/Desktop/_9hHVG3Loc8.jpg")[0]
-attachments.append(f"photo{image['owner_id']}_{image['id']}")
-attachments.append(f"photo{image['owner_id']}_{image['id']}")
 
 
 # Универсальный метод
