@@ -22,6 +22,7 @@ class Bot:
         self.possible_answers = None # Ответы на текцщий вопрос
         self.last_keyboard = None # Хранение клавиатуры на случай неправильного ввода ответа
 
+
 # Вызывает функцию для текущей задачи. Нужно для того, чтобы можно было обращаться к одной функции
     def update(self, text):
 
@@ -69,6 +70,7 @@ class Bot:
 
         else:
             return Answer("Команда не распознана")
+
 
 # Функции бота
     def main_menu(self):
