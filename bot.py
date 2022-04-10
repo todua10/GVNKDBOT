@@ -4,12 +4,13 @@ from vk_api.keyboard import VkKeyboard, VkKeyboardColor, VkKeyboardButton
 
 # Класс ответа от бота. Нужен для того, чтобы бот мог задавать вопросы с выбором ответа и отправлять клавиатуру
 class Answer:
-    def __init__(self, text="Ошибка", answers=None, one_time=True, inline=False, keyboard=None):
+    def __init__(self, text="Ошибка", answers=None, one_time=True, inline=False, keyboard=None, attachments=None):
         self.text = text
         self.answers = answers
         self.one_time = one_time
         self.inline = inline
         self.keyboard = keyboard
+        self.attachments = attachments
 
 
 class Bot:

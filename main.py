@@ -1,5 +1,6 @@
 import vk_api, cfg
 
+from vk_api import VkUpload
 from vk_api.longpoll import VkLongPoll, VkEventType
 from vk_api.keyboard import VkKeyboard, VkKeyboardColor, VkKeyboardButton
 from  vk_api.utils import get_random_id
@@ -10,9 +11,27 @@ from bot import Answer
 vk_session = vk_api.VkApi(token=cfg.access_token2)
 vk_longpoll = VkLongPoll(vk_session)
 vk = vk_session.get_api()
+upload = VkUpload(vk_session)
 
-# Упрощенные методы отправки сообщений
-def send_message(id, text, answers=None):
+
+# Универсальный метод
+def send_message(id, text, answers=None, one_time=True, inline=False, keyboard=None, attachments = None):
+    if not answers and not keyboard and not attachments:
+        send_text(id, text)
+    elif answers and not keyboard and not attachments:
+        send_easy_keyboard(id, text, answers, one_time, inline)
+    elif keyboard and not attachments:
+        send_keyboard(id, text, keyboard)
+    elif answers and attachments:
+        keyboard = easy_keyboard(answers, one_time, inline)
+        send_message(user_id=id, message=text, random_id=get_random_id(), keyboard=keyboard, attachments=attachments)
+    elif keyboard and attachments:
+        send_message(user_id=id, message=text, random_id=get_random_id(), keyboard=keyboard, attachments=attachments)
+    elif attachments:
+        send_attachments(id, text, attachments)
+
+# Упрощенные, более безопасные методы
+def send_text(id, text):
     vk.messages.send(user_id=id, message=text, random_id=get_random_id())
 
 # Упрощенное создание сообщения с клавиатурой
@@ -29,6 +48,11 @@ def send_keyboard(id, text, keyboard):
         vk.messages.send(user_id=id, message=text,
                          random_id=get_random_id(),
                          keyboard=keyboard.get_keyboard())
+
+
+def send_attachments(id, text, attachments):
+    vk.messages.send(user_id=id, message=text, random_id=get_random_id(), attachment=','.join(attachments))
+
 
 
 # Проверка соответсвия клавиатуры ограничениям
@@ -75,10 +99,5 @@ for event in vk_longpoll.listen():
         if event.user_id not in bots: # Если пользователь обращается впервые, создает новый экземпляр работяги (ключ - id пользователя)
             bots[event.user_id] = Bot(event.user_id)
 
-        bot_answer = bots[event.user_id].update(event.text)
-        if bot_answer.answers:
-            send_easy_keyboard(event.user_id, bot_answer.text, bot_answer.answers, bot_answer.one_time, bot_answer.inline)
-        elif bot_answer.keyboard:
-            send_keyboard(event.user_id, bot_answer.text, bot_answer.keyboard)
-        else:
-            send_message(event.user_id, bot_answer.text)
+        bot_ans = bots[event.user_id].update(event.text)
+        send_message(event.user_id, bot_ans.text, bot_ans.answers, bot_ans.one_time, bot_ans.inline, bot_ans.keyboard, bot_ans.attachments)
