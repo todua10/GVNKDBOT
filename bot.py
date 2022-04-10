@@ -4,7 +4,7 @@ from vk_api.keyboard import VkKeyboard, VkKeyboardColor, VkKeyboardButton
 
 # Класс ответа от бота. Нужен для того, чтобы бот мог задавать вопросы с выбором ответа и отправлять клавиатуру
 class Answer:
-    def __init__(self, text, answers=None, one_time=True, inline=False, keyboard=None):
+    def __init__(self, text="Ошибка", answers=None, one_time=True, inline=False, keyboard=None):
         self.text = text
         self.answers = answers
         self.one_time = one_time
@@ -17,11 +17,13 @@ class Bot:
         self._user_id = user_id
         self.welcome_message_sent = False
         self.next_task = "talk" # Переменная необходимая, чтобы переключать режим работы бота
-        self.current_quesion = 0
+        self.last_quesion = -1 # Переменная для прохождения теста
+        self.possible_answers = None # Ответы на текцщий вопрос
+        self.last_keyboard = None # Хранение клавиатуры на случай неправильного ввода ответа
 
-    # Вызывает функцию для текущей задачи. Нужно для того, чтобы можно было обращаться к одной функции
+# Вызывает функцию для текущей задачи. Нужно для того, чтобы можно было обращаться к одной функции
     def update(self, text):
-        # Передается входное значение в функцию
+
         if self.next_task == "talk":
             return self.talk(text)
 
@@ -53,13 +55,13 @@ class Bot:
             return self.help()
 
         elif text.lower() in ("начать тест", "тест", "вопросы"):
-            return self.test(text)
+            return self.test("$")
 
         elif text.lower() in ("показать мем", "хочу мем", "мем"):
             return self.show_meme(text)
 
         elif text.lower() in ("статистика", "показать статистику", "личная статистика"):
-            return self.show_stat(text)
+            return self.show_stat("$")
 
         elif text.lower() in ("загрузить мем", "загрузить фото"):
             return self.upload_meme(text)
@@ -67,7 +69,7 @@ class Bot:
         else:
             return Answer("Команда не распознана")
 
-
+# Функции бота
     def welcome(self):
         if not self.welcome_message_sent:
             self.welcome_message_sent = True
@@ -93,9 +95,120 @@ class Bot:
 
     def test(self, text):
         self.next_task = "test"
+        questions = (("Как настроение?", "Отлично",  "Не очень"),
+                     ("Вопрос 2", "ответ 1", "ответ 2", "ответ 3"),
+                     ("Где ты живешь?", "место"),
+                     ("Вопрос 4", "Положительно", "Отрицательно", "Нейтрально"),
+                     ("Вопрос 5", "ответ 1", "ответ 2", "ответ 3", "ответ 4"),
+                     ("Вопрос 6", "ответ 1", "ответ 2"),
+                     ("Вопрос 7", "ответ 1", "ответ 2", "ответ 3"),
+                     ("Вопрос 8", "ответ 1", "ответ 2", "ответ 3"))
+        ans = Answer()
 
-        if self.current_quesion == 0:
-            return Answer("1")
+        if text == "$": # $ - символ для начала теста
+            self.last_quesion += 1
+            self.possible_answers = questions[self.last_quesion][1:]
+
+            keyboard = VkKeyboard(inline=True)
+            keyboard.add_button(questions[self.last_quesion][1], color=VkKeyboardColor.POSITIVE)
+            keyboard.add_button(questions[0][2], color=VkKeyboardColor.NEGATIVE)
+            self.last_keyboard = keyboard
+
+            return Answer(questions[0][0], keyboard=keyboard)
+
+        elif text in self.possible_answers and self.last_quesion == 0:
+            self.last_quesion += 1
+            self.possible_answers = questions[self.last_quesion][1:]
+
+            keyboard = VkKeyboard(inline=True)
+            keyboard.add_button(questions[self.last_quesion][1], color=VkKeyboardColor.POSITIVE)
+            keyboard.add_button(questions[self.last_quesion][2], color=VkKeyboardColor.NEGATIVE)
+            keyboard.add_button(questions[self.last_quesion][3], color=VkKeyboardColor.NEGATIVE)
+            self.last_keyboard = keyboard
+
+            return Answer(questions[self.last_quesion][0], keyboard=keyboard)
+
+        elif text in self.possible_answers and self.last_quesion == 1:
+            self.last_quesion += 1
+            self.possible_answers = questions[self.last_quesion][1:]
+
+            keyboard = VkKeyboard(inline=True)
+
+            # заменить на локацию
+            keyboard.add_button(questions[self.last_quesion][1], color=VkKeyboardColor.POSITIVE)
+            self.last_keyboard = keyboard
+
+            return Answer(questions[self.last_quesion][0], keyboard=keyboard)
+
+        elif text in self.possible_answers and self.last_quesion == 2:
+            self.last_quesion += 1
+            self.possible_answers = questions[self.last_quesion][1:]
+
+            keyboard = VkKeyboard(inline=True)
+            keyboard.add_button(questions[self.last_quesion][1], color=VkKeyboardColor.POSITIVE)
+            keyboard.add_button(questions[self.last_quesion][2], color=VkKeyboardColor.PRIMARY)
+            keyboard.add_button(questions[self.last_quesion][3], color=VkKeyboardColor.NEGATIVE)
+            self.last_keyboard = keyboard
+
+            return Answer(questions[self.last_quesion][0], keyboard=keyboard)
+
+        elif text in self.possible_answers and self.last_quesion == 3:
+            self.last_quesion += 1
+            self.possible_answers = questions[self.last_quesion][1:]
+
+            keyboard = VkKeyboard(inline=True)
+            keyboard.add_button(questions[self.last_quesion][1], color=VkKeyboardColor.POSITIVE)
+            keyboard.add_button(questions[self.last_quesion][2], color=VkKeyboardColor.NEGATIVE)
+            keyboard.add_button(questions[self.last_quesion][3], color=VkKeyboardColor.POSITIVE)
+            keyboard.add_button(questions[self.last_quesion][4], color=VkKeyboardColor.NEGATIVE)
+            self.last_keyboard = keyboard
+
+            return Answer(questions[self.last_quesion][0], keyboard=keyboard)
+
+        elif text in self.possible_answers and self.last_quesion == 4:
+            self.last_quesion += 1
+            self.possible_answers = questions[self.last_quesion][1:]
+
+            keyboard = VkKeyboard(inline=True)
+            keyboard.add_button(questions[self.last_quesion][1], color=VkKeyboardColor.POSITIVE)
+            keyboard.add_button(questions[self.last_quesion][2], color=VkKeyboardColor.NEGATIVE)
+            self.last_keyboard = keyboard
+
+            return Answer(questions[self.last_quesion][0], keyboard=keyboard)
+
+        elif text in self.possible_answers and self.last_quesion == 5:
+            self.last_quesion += 1
+            self.possible_answers = questions[self.last_quesion][1:]
+
+            keyboard = VkKeyboard(inline=True)
+            keyboard.add_button(questions[self.last_quesion][1], color=VkKeyboardColor.POSITIVE)
+            keyboard.add_button(questions[self.last_quesion][2], color=VkKeyboardColor.PRIMARY)
+            keyboard.add_button(questions[self.last_quesion][2], color=VkKeyboardColor.NEGATIVE)
+            self.last_keyboard = keyboard
+
+            return Answer(questions[self.last_quesion][0], keyboard=keyboard)
+
+        elif text in self.possible_answers and self.last_quesion == 6:
+            self.last_quesion += 1
+            self.possible_answers = questions[self.last_quesion][1:]
+
+            keyboard = VkKeyboard(inline=True)
+            keyboard.add_button(questions[self.last_quesion][1], color=VkKeyboardColor.POSITIVE)
+            keyboard.add_button(questions[self.last_quesion][2], color=VkKeyboardColor.PRIMARY)
+            keyboard.add_button(questions[self.last_quesion][2], color=VkKeyboardColor.NEGATIVE)
+            self.last_keyboard = keyboard
+
+            return Answer(questions[self.last_quesion][0], keyboard=keyboard)
+
+        elif text in self.possible_answers:
+            return self.welcome()
+
+        elif text in ("вернуться в начало", "начало", "закончить"):
+            self.next_task = "talk"
+            return self.welcome()
+        else:
+
+            return Answer("Такого ответа нет")
 
 
     def show_meme(self, text):
