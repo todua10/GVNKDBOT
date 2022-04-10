@@ -9,7 +9,7 @@ from bot import Answer
 
 
 # Авторизация
-vk_session = vk_api.VkApi(token=cfg.access_token2)
+vk_session = vk_api.VkApi(token=cfg.access_token)
 vk_longpoll = VkLongPoll(vk_session)
 vk = vk_session.get_api()
 upload = VkUpload(vk_session)
