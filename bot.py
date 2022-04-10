@@ -1,5 +1,17 @@
 import vk_api, cfg
 from vk_api.keyboard import VkKeyboard, VkKeyboardColor, VkKeyboardButton
+from vk_api import VkUpload
+attachments = []
+photos = {}
+
+vk_session = vk_api.VkApi(token=cfg.access_token)
+upload = VkUpload(vk_session)
+
+numbers = list(range(1, 51))
+# numbers.append(numbers[-1]+1)
+n = 0
+image = 'C:/Users/1/PycharmProjects/vkbot/memephotos/' + str(numbers[n]) + ".jpg"
+upload_image = upload.photo_messages(photos=image)[0]
 
 
 # Класс ответа от бота. Нужен для того, чтобы бот мог задавать вопросы с выбором ответа и отправлять клавиатуру
@@ -216,11 +228,12 @@ class Bot:
 
 
     def show_meme(self, text):
-        #self.next_task = "show_meme"
+        self.next_task = "show_meme"
         keyboard = VkKeyboard(inline=True)
-        keyboard.add_button("Заебись", color=VkKeyboardColor.POSITIVE)
-        keyboard.add_button("Хуево", color=VkKeyboardColor.NEGATIVE)
-        return Answer("https://youtu.be/oDwPqhfwx64", keyboard=keyboard)
+        keyboard.add_button("Лайк", color=VkKeyboardColor.POSITIVE)
+        keyboard.add_button("Дизлайк", color=VkKeyboardColor.NEGATIVE)
+        attachments.append('photo{}_{}'.format(upload_image['owner_id'], upload_image['id']))
+        return Answer("", keyboard=keyboard, attachments=','.join(attachments))
 
 
     def show_stat(self, text):

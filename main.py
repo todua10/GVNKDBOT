@@ -9,7 +9,7 @@ from bot import Answer
 
 
 # Авторизация
-vk_session = vk_api.VkApi(token=cfg.access_token2)
+vk_session = vk_api.VkApi(token=cfg.access_token)
 vk_longpoll = VkLongPoll(vk_session)
 vk = vk_session.get_api()
 upload = VkUpload(vk_session)
@@ -104,4 +104,5 @@ for event in vk_longpoll.listen():
             bots[event.user_id] = Bot(event.user_id)
 
         bot_ans = bots[event.user_id].update(event.text)
+        print(event.user_id)
         send_message(event.user_id, bot_ans.text, bot_ans.answers, bot_ans.one_time, bot_ans.inline, bot_ans.keyboard, bot_ans.attachments)
