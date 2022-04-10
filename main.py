@@ -29,7 +29,7 @@ def send_message(id, text, answers=None, one_time=True, inline=False, keyboard=N
     elif keyboard and attachments:
         send_message(user_id=id, message=text, random_id=get_random_id(), keyboard=keyboard, attachments=attachments)
     elif attachments:
-        send_attachments(id, text, attachments)
+        send_attachments(user_id=id, message=text, random=attachments)
 
 
 # Упрощенные, более безопасные методы
