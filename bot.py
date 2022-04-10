@@ -27,8 +27,8 @@ class Bot:
         if self.next_task == "talk":
             return self.talk(text)
 
-        if self.next_task == "welcome":
-            return self.welcome()
+        if self.next_task == "main_menu":
+            return self.main_menu()
 
         if self.next_task == "test":
             return self.test(text)
@@ -49,7 +49,7 @@ class Bot:
 # Здесь бот принимает сообщения и определяет дальнейшую работу
     def talk(self, text):
         if text.lower() in ("привет", "ку", "здарвствуйте", "вернуться в начало", "начало"):
-            return self.welcome()
+            return self.main_menu()
 
         elif text.lower() in ("help", "помощь", "команды"):
             return self.help()
@@ -70,18 +70,19 @@ class Bot:
             return Answer("Команда не распознана")
 
 # Функции бота
-    def welcome(self):
+    def main_menu(self):
+        self.next_task = "talk"
+        keyboard = VkKeyboard(one_time=True)
+        keyboard.add_button("Начать тест", color=VkKeyboardColor.POSITIVE)
+        keyboard.add_button("Мем", color=VkKeyboardColor.NEGATIVE)
+        keyboard.add_line()
+        keyboard.add_button("Статистика", color=VkKeyboardColor.PRIMARY)
+        keyboard.add_button("Загрузить мем", color=VkKeyboardColor.SECONDARY)
         if not self.welcome_message_sent:
             self.welcome_message_sent = True
-            keyboard = VkKeyboard(one_time=True)
-            keyboard.add_button("Начать тест",color=VkKeyboardColor.POSITIVE)
-            keyboard.add_button("Мем", color=VkKeyboardColor.NEGATIVE)
-            keyboard.add_line()
-            keyboard.add_button("Статистика", color=VkKeyboardColor.PRIMARY)
-            keyboard.add_button("Загрузить мем", color=VkKeyboardColor.SECONDARY)
             return Answer("Привет вездекодерам!", keyboard=keyboard)
         else:
-            return Answer("Привет еще раз!")
+            return Answer("Главное меню", keyboard=keyboard)
 
 
     def help(self):
@@ -98,7 +99,7 @@ class Bot:
         questions = (("Как настроение?", "Отлично",  "Не очень"),
                      ("Вопрос 2", "ответ 1", "ответ 2", "ответ 3"),
                      ("Где ты живешь?", "место"),
-                     ("Вопрос 4", "Положительно", "Отрицательно", "Нейтрально"),
+                     ("Вопрос 4", "Положительно", "Нейтрально", "Отрицательно"),
                      ("Вопрос 5", "ответ 1", "ответ 2", "ответ 3", "ответ 4"),
                      ("Вопрос 6", "ответ 1", "ответ 2"),
                      ("Вопрос 7", "ответ 1", "ответ 2", "ответ 3"),
@@ -133,14 +134,14 @@ class Bot:
             self.possible_answers = questions[self.last_quesion][1:]
 
             keyboard = VkKeyboard(inline=True)
-
-            # заменить на локацию
-            keyboard.add_button(questions[self.last_quesion][1], color=VkKeyboardColor.POSITIVE)
+            # кнопка на локации, можно доработать
+            keyboard.add_location_button()
             self.last_keyboard = keyboard
 
             return Answer(questions[self.last_quesion][0], keyboard=keyboard)
 
-        elif text in self.possible_answers and self.last_quesion == 2:
+        # здесь нет проверки на ответ
+        elif not text and self.last_quesion == 2:
             self.last_quesion += 1
             self.possible_answers = questions[self.last_quesion][1:]
 
@@ -200,14 +201,14 @@ class Bot:
 
             return Answer(questions[self.last_quesion][0], keyboard=keyboard)
 
-        elif text in self.possible_answers:
-            return self.welcome()
+        elif text in self.possible_answers or text in ("вернуться в начало", "начало", "закончить"):
+            self.possible_answers = None
+            self.last_quesion = -1
+            self.next_task = "main_menu"
+            return self.main_menu()
 
-        elif text in ("вернуться в начало", "начало", "закончить"):
-            self.next_task = "talk"
-            return self.welcome()
         else:
-
+            print(text)
             return Answer("Такого ответа нет")
 
 
