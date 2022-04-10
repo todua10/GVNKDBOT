@@ -7,6 +7,7 @@ from  vk_api.utils import get_random_id
 from bot import Bot
 from bot import Answer
 
+
 # Авторизация
 vk_session = vk_api.VkApi(token=cfg.access_token2)
 vk_longpoll = VkLongPoll(vk_session)
@@ -28,11 +29,13 @@ def send_message(id, text, answers=None, one_time=True, inline=False, keyboard=N
     elif keyboard and attachments:
         send_message(user_id=id, message=text, random_id=get_random_id(), keyboard=keyboard, attachments=attachments)
     elif attachments:
-        send_attachments(id, text, attachments)
+        send_attachments(user_id=id, message=text, random=attachments)
+
 
 # Упрощенные, более безопасные методы
 def send_text(id, text):
     vk.messages.send(user_id=id, message=text, random_id=get_random_id())
+
 
 # Упрощенное создание сообщения с клавиатурой
 def send_easy_keyboard(id, text, answers, one_time=True, inline=False):
@@ -41,6 +44,7 @@ def send_easy_keyboard(id, text, answers, one_time=True, inline=False):
         vk.messages.send(user_id=id, message=text,
                          random_id=get_random_id(),
                          keyboard=keyboard.get_keyboard())
+
 
 # Отправление сообщения с клавиатурой
 def send_keyboard(id, text, keyboard):
@@ -52,7 +56,6 @@ def send_keyboard(id, text, keyboard):
 
 def send_attachments(id, text, attachments):
     vk.messages.send(user_id=id, message=text, random_id=get_random_id(), attachment=','.join(attachments))
-
 
 
 # Проверка соответсвия клавиатуры ограничениям
@@ -92,6 +95,7 @@ def easy_keyboard(answers=None, one_time=True, inline=False):
 
 # Словарь работяг, созданных под каждого пользователя
 bots = {}
+
 
 # Работяги идут на работу
 for event in vk_longpoll.listen():
