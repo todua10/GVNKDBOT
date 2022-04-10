@@ -76,7 +76,6 @@ for event in vk_longpoll.listen():
             bots[event.user_id] = Bot(event.user_id)
 
         bot_answer = bots[event.user_id].update(event.text)
-
         if bot_answer.answers:
             send_easy_keyboard(event.user_id, bot_answer.text, bot_answer.answers, bot_answer.one_time, bot_answer.inline)
         elif bot_answer.keyboard:
