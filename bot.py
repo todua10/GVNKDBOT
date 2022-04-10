@@ -9,7 +9,7 @@ photos = {}
 vk_session = vk_api.VkApi(token=cfg.access_token)
 upload = VkUpload(vk_session)
 
-image = upload.photo_messages(photos="C:/Users/1/PycharmProjects/vkbot/memephotos/1.jpg")[0]
+image = upload.photo_messages(photos="C:/Users/dontn/Desktop/_9hHVG3Loc8.jpg")[0]
 attachments.append(f"photo{image['owner_id']}_{image['id']}")
 
 
@@ -112,7 +112,7 @@ class Bot:
 
     def test(self, text):
         self.next_task = "test"
-        questions = (("Как настроение?", "Отлично",  "Не очень"),
+        questions = (("Как настроение?", "Отлично", "Не очень"),
                      ("Как погода?", "Отлично", "Пасмурно", "Ветренно"),
                      ("Где ты живешь?", "место"),
                      ("Играешь в игры?", "Да", "Нет", "Я киберспортсмен"),
@@ -200,9 +200,7 @@ class Bot:
 
             keyboard = VkKeyboard(inline=True)
             keyboard.add_button(questions[self.last_quesion][1], color=VkKeyboardColor.POSITIVE)
-            keyboard.add_line()
             keyboard.add_button(questions[self.last_quesion][2], color=VkKeyboardColor.PRIMARY)
-            keyboard.add_line()
             keyboard.add_button(questions[self.last_quesion][3], color=VkKeyboardColor.NEGATIVE)
             self.last_keyboard = keyboard
 
@@ -214,9 +212,7 @@ class Bot:
 
             keyboard = VkKeyboard(inline=True)
             keyboard.add_button(questions[self.last_quesion][1], color=VkKeyboardColor.POSITIVE)
-            keyboard.add_line()
             keyboard.add_button(questions[self.last_quesion][2], color=VkKeyboardColor.PRIMARY)
-            keyboard.add_line()
             keyboard.add_button(questions[self.last_quesion][3], color=VkKeyboardColor.NEGATIVE)
             self.last_keyboard = keyboard
 
