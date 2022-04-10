@@ -1,12 +1,16 @@
 import vk_api, cfg
 from vk_api.keyboard import VkKeyboard, VkKeyboardColor, VkKeyboardButton
 from vk_api import VkUpload
+
+
 attachments = []
 photos = {}
 
 vk_session = vk_api.VkApi(token=cfg.access_token2)
 upload = VkUpload(vk_session)
 
+image = upload.photo_messages(photos="C:/Users/dontn/Desktop/_9hHVG3Loc8.jpg")[0]
+attachments.append(f"photo{image['owner_id']}_{image['id']}")
 
 
 
@@ -225,14 +229,11 @@ class Bot:
 
 
     def show_meme(self, text):
-        self.next_task = "show_meme"
+        #self.next_task = "show_meme"
         keyboard = VkKeyboard(inline=True)
         keyboard.add_button("Лайк", color=VkKeyboardColor.POSITIVE)
         keyboard.add_button("Дизлайк", color=VkKeyboardColor.NEGATIVE)
 
-
-        image = upload.photo_messages(photos="C:/Users/dontn/Desktop/_9hHVG3Loc8.jpg")[0]
-        attachments.append(f"photo{image['owner_id']}_{image['id']}")
         return Answer(keyboard=keyboard, attachment=','.join(attachments))
 
 

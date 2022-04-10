@@ -19,26 +19,36 @@ upload = VkUpload(vk_session)
 def send_message(id, text=None, answers=None, one_time=True, inline=False, keyboard=None, attachment=None):
     if not answers and not keyboard and not attachment:
         send_text(id, text)
+
     elif answers and not keyboard and not attachment:
         send_easy_keyboard(id, text, answers, one_time, inline)
+
     elif keyboard and not attachment:
         send_keyboard(id, text, keyboard)
+
     elif answers and attachment:
         keyboard = easy_keyboard(answers, one_time, inline)
-        vk.messages.send(user_id=id, message=text, random_id=get_random_id(), keyboard=keyboard.get_keyboard(), attachment=attachment)
+        vk.messages.send(user_id=id, message=text,
+                         random_id=get_random_id(), keyboard=keyboard.get_keyboard(),
+                         attachment=attachment)
+
     elif keyboard and attachment:
-        vk.messages.send(user_id=id, message=text, random_id=get_random_id(), keyboard=keyboard.get_keyboard(), attachment=attachment)
-    elif attachment and text:
-        send_attachment(user_id=id, message=text, attachment=attachment)
+        vk.messages.send(user_id=id, message=text,
+                         random_id=get_random_id(), keyboard=keyboard.get_keyboard(),
+                         attachment=attachment)
+    elif attachment:
+        send_attachment(user_id=id, message=text,
+                        attachment=attachment)
 
 
 # Упрощенные, более безопасные методы
 def send_text(id, text):
-    vk.messages.send(user_id=id, message=text, random_id=get_random_id())
+    vk.messages.send(user_id=id, message=text,
+                     random_id=get_random_id())
 
 
 # Упрощенное создание сообщения с клавиатурой
-def send_easy_keyboard(id, text, answers, one_time=True, inline=False):
+def send_easy_keyboard(id, text=None, answers=None, one_time=True, inline=False):
     keyboard = easy_keyboard(answers, one_time, inline)
     if validate_keyboard(keyboard):
         vk.messages.send(user_id=id, message=text,
@@ -47,20 +57,18 @@ def send_easy_keyboard(id, text, answers, one_time=True, inline=False):
 
 
 # Отправление сообщения с клавиатурой
-def send_keyboard(id, text, keyboard):
+def send_keyboard(id, text=None, keyboard=None):
     if validate_keyboard(keyboard):
-        if text:
-            vk.messages.send(user_id=id, message=text,
-                            random_id=get_random_id(),
-                            keyboard=keyboard.get_keyboard())
-        else:
-            vk.messages.send(user_id=id,
-                             random_id=get_random_id(),
-                             keyboard=keyboard.get_keyboard())
+        vk.messages.send(user_id=id, message=text,
+                        random_id=get_random_id(),
+                        keyboard=keyboard.get_keyboard())
 
 
-def send_attachment(id, text, attachment):
-    vk.messages.send(user_id=id, message=text, random_id=get_random_id(), attachment=','.join(attachments))
+
+def send_attachment(id, text=None, attachment=None):
+    vk.messages.send(user_id=id, message=text,
+                     random_id=get_random_id(),
+                     attachment=','.join(attachments))
 
 
 # Проверка соответсвия клавиатуры ограничениям
@@ -81,6 +89,8 @@ def validate_keyboard(keyboard):
 def easy_keyboard(answers=None, one_time=True, inline=False):
     one_time = one_time if not inline else False  # inline клавиатура не может быть one_time
     keyboard = VkKeyboard(one_time=one_time, inline=inline)
+    if not answers:
+        return keyboard
 
     if len(answers)>40 and not keyboard.inline or len(answers)>10 and keyboard.inline:
         return
@@ -109,5 +119,4 @@ for event in vk_longpoll.listen():
             bots[event.user_id] = Bot(event.user_id)
 
         bot_ans = bots[event.user_id].update(event.text)
-        print(bot_ans.text)
         send_message(event.user_id, bot_ans.text, bot_ans.answers, bot_ans.one_time, bot_ans.inline, bot_ans.keyboard, bot_ans.attachment)
