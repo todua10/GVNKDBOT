@@ -4,13 +4,11 @@ from vk_api import VkUpload
 attachments = []
 photos = {}
 
-vk_session = vk_api.VkApi(token=cfg.access_token)
+vk_session = vk_api.VkApi(token=cfg.access_token2)
 upload = VkUpload(vk_session)
 
-numbers = list(range(1, 51))
-# numbers.append(numbers[-1]+1)
-n = 0
-image = 'C:/Users/1/PycharmProjects/vkbot/memephotos/' + str(numbers[n]) + ".jpg"
+
+image = "C:/Users/dontn/Desktop/_9hHVG3Loc8.jpg"
 upload_image = upload.photo_messages(photos=image)[0]
 
 
@@ -232,8 +230,11 @@ class Bot:
         keyboard = VkKeyboard(inline=True)
         keyboard.add_button("Лайк", color=VkKeyboardColor.POSITIVE)
         keyboard.add_button("Дизлайк", color=VkKeyboardColor.NEGATIVE)
+
+        image = "C:/Users/dontn/Desktop/_9hHVG3Loc8.jpg"
+        upload_image = upload.photo_messages(photos=image)[0]
         attachments.append('photo{}_{}'.format(upload_image['owner_id'], upload_image['id']))
-        return Answer("", keyboard=keyboard, attachments=','.join(attachments))
+        return Answer("text", keyboard=keyboard, attachments=','.join(attachments))
 
 
     def show_stat(self, text):

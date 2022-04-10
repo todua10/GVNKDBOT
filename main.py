@@ -9,7 +9,7 @@ from bot import Answer
 
 
 # Авторизация
-vk_session = vk_api.VkApi(token=cfg.access_token)
+vk_session = vk_api.VkApi(token=cfg.access_token2)
 vk_longpoll = VkLongPoll(vk_session)
 vk = vk_session.get_api()
 upload = VkUpload(vk_session)
@@ -25,9 +25,9 @@ def send_message(id, text, answers=None, one_time=True, inline=False, keyboard=N
         send_keyboard(id, text, keyboard)
     elif answers and attachments:
         keyboard = easy_keyboard(answers, one_time, inline)
-        send_message(user_id=id, message=text, random_id=get_random_id(), keyboard=keyboard, attachments=attachments)
+        vk.messages.send(user_id=id, message=text, random_id=get_random_id(), keyboard=keyboard.get_keyboard(), attachments=attachments)
     elif keyboard and attachments:
-        send_message(user_id=id, message=text, random_id=get_random_id(), keyboard=keyboard, attachments=attachments)
+        vk.messages.send(user_id=id, message=text, random_id=get_random_id(), keyboard=keyboard.get_keyboard(), attachments=attachments)
     elif attachments:
         send_attachments(user_id=id, message=text, random=attachments)
 
@@ -104,5 +104,5 @@ for event in vk_longpoll.listen():
             bots[event.user_id] = Bot(event.user_id)
 
         bot_ans = bots[event.user_id].update(event.text)
-        print(event.user_id)
+        print(bot_ans.text)
         send_message(event.user_id, bot_ans.text, bot_ans.answers, bot_ans.one_time, bot_ans.inline, bot_ans.keyboard, bot_ans.attachments)
