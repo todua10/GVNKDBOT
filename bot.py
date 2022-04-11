@@ -9,8 +9,7 @@ photos = {}
 vk_session = vk_api.VkApi(token=cfg.access_token)
 upload = VkUpload(vk_session)
 
-image = upload.photo_messages(photos="C:/Users/dontn/Desktop/_9hHVG3Loc8.jpg")[0]
-attachments.append(f"photo{image['owner_id']}_{image['id']}")
+
 
 
 
@@ -112,15 +111,14 @@ class Bot:
 
     def test(self, text):
         self.next_task = "test"
-        questions = (("Как настроение?", "Отлично", "Не очень"),
-                     ("Как погода?", "Отлично", "Пасмурно", "Ветренно"),
+        questions = (("Как настроение?", "Отлично",  "Не очень"),
+                     ("Вопрос 2", "ответ 1", "ответ 2", "ответ 3"),
                      ("Где ты живешь?", "место"),
-                     ("Играешь в игры?", "Да", "Нет", "Я киберспортсмен"),
-                     ("Какой жанр фильмов любишь?", "Ужасы", "Комедия", "Драма", "Все остальное"),
-                     ("Джа-Джа-Бинкс ситх?", "Да", "Прибудет с тобой сила"),
-                     ("В какой части звездных войн появился капитан Кирк?", "Империя наносит ответный удар",
-                      "Пробуждение силы", "Че"),
-                     ("ЮУрГУ и ВК лучшие в мире?", "Да", "Конечно", "А как может быть иначе?!"))
+                     ("Вопрос 4", "Положительно", "Нейтрально", "Отрицательно"),
+                     ("Вопрос 5", "ответ 1", "ответ 2", "ответ 3", "ответ 4"),
+                     ("Вопрос 6", "ответ 1", "ответ 2"),
+                     ("Вопрос 7", "ответ 1", "ответ 2", "ответ 3"),
+                     ("Вопрос 8", "ответ 1", "ответ 2", "ответ 3"))
         ans = Answer()
 
         if text == "$": # $ - символ для начала теста
@@ -201,7 +199,7 @@ class Bot:
             keyboard = VkKeyboard(inline=True)
             keyboard.add_button(questions[self.last_quesion][1], color=VkKeyboardColor.POSITIVE)
             keyboard.add_button(questions[self.last_quesion][2], color=VkKeyboardColor.PRIMARY)
-            keyboard.add_button(questions[self.last_quesion][3], color=VkKeyboardColor.NEGATIVE)
+            keyboard.add_button(questions[self.last_quesion][2], color=VkKeyboardColor.NEGATIVE)
             self.last_keyboard = keyboard
 
             return Answer(questions[self.last_quesion][0], keyboard=keyboard)
@@ -213,7 +211,7 @@ class Bot:
             keyboard = VkKeyboard(inline=True)
             keyboard.add_button(questions[self.last_quesion][1], color=VkKeyboardColor.POSITIVE)
             keyboard.add_button(questions[self.last_quesion][2], color=VkKeyboardColor.PRIMARY)
-            keyboard.add_button(questions[self.last_quesion][3], color=VkKeyboardColor.NEGATIVE)
+            keyboard.add_button(questions[self.last_quesion][2], color=VkKeyboardColor.NEGATIVE)
             self.last_keyboard = keyboard
 
             return Answer(questions[self.last_quesion][0], keyboard=keyboard)
