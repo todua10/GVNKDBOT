@@ -233,7 +233,7 @@ class Bot:
         keyboard.add_button("Лайк", color=VkKeyboardColor.POSITIVE)
         keyboard.add_button("Дизлайк", color=VkKeyboardColor.NEGATIVE)
 
-        return Answer(keyboard=keyboard, attachment=','.join(attachments))
+        return Answer("Держи", keyboard=keyboard, attachment=','.join(attachments))
 
 
     def show_stat(self, text):
